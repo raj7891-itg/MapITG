@@ -13,6 +13,9 @@ class VehicleDetailsPopup: UIViewController {
     @IBOutlet weak var bgView: UIView!
     
     
+    @IBOutlet weak var borderBgView: UIView!
+    
+    
     var details: DetailsModel?
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -30,15 +33,23 @@ class VehicleDetailsPopup: UIViewController {
 
     private func stylePopupView() {
         
-        bgView.layer.cornerRadius = 60
+        bgView.layer.cornerRadius = 25
         bgView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
 
         
         bgView.layer.shadowColor = UIColor(red: 0/255, green: 0/255, blue: 128/255, alpha: 1).cgColor
         bgView.layer.shadowOpacity = 0.4
-        bgView.layer.shadowOffset = CGSize(width: 0, height: 3) //
-        bgView.layer.shadowRadius = 8
-        bgView.layer.masksToBounds = false
+        bgView.layer.shadowOffset = CGSize(width: 0, height: 3)
+        bgView.layer.masksToBounds = true
+        
+        borderBgView.layer.cornerRadius = 25
+        borderBgView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
+
+        
+        borderBgView.layer.shadowColor = UIColor(red: 0/255, green: 0/255, blue: 128/255, alpha: 1).cgColor
+        borderBgView.layer.shadowOpacity = 0.4
+        borderBgView.layer.shadowOffset = CGSize(width: 0, height: 3)
+        borderBgView.layer.masksToBounds = true
     }
 
     
