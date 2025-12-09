@@ -578,7 +578,7 @@ extension MapViewVC {
     func openVehicleDetailPopUp() {
         let storyboard = UIStoryboard(name: "MapViewVC", bundle: nil)
         let mapVC = storyboard.instantiateViewController(withIdentifier: "VehicleDetailsPopup") as! VehicleDetailsPopup
-        mapVC.modalPresentationStyle = .popover
+        mapVC.modalPresentationStyle = .overCurrentContext
         mapVC.details = self.vehicleDetails
         present(mapVC, animated: true)
     }

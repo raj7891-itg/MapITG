@@ -126,8 +126,8 @@
             filePath = "ITG/Map Module/Map/Vehicle Details/Controller/VehicleDetailsPopup.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "21"
-            endingLineNumber = "21"
+            startingLineNumber = "46"
+            endingLineNumber = "46"
             landmarkName = "initialSetUP()"
             landmarkType = "7">
          </BreakpointContent>
@@ -142,8 +142,8 @@
             filePath = "ITG/Map Module/Map/Vehicle Details/Controller/VehicleDetailsPopup.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "22"
-            endingLineNumber = "22"
+            startingLineNumber = "47"
+            endingLineNumber = "47"
             landmarkName = "initialSetUP()"
             landmarkType = "7">
          </BreakpointContent>

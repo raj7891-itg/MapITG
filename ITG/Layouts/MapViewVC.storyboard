@@ -488,6 +488,7 @@
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="bgView" destination="c3y-cZ-odZ" id="zkb-2z-8jg"/>
                         <outletCollection property="labeeTitleArray" destination="Ts8-TT-gJE" collectionClass="NSMutableArray" id="fg4-9y-RKt"/>
                         <outletCollection property="labeeTitleArray" destination="5Ct-Le-J3n" collectionClass="NSMutableArray" id="QGe-Mi-hgv"/>
                     </connections>
