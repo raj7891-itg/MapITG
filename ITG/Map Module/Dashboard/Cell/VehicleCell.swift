@@ -7,14 +7,13 @@
 
 import UIKit
 
-class DashboardCell: UICollectionViewCell {
+class VehicleCell: UICollectionViewCell {
     
     
     @IBOutlet weak var totalVehicleLbl: UILabel!
-    @IBOutlet weak var vehicleNumLbl: UILabel!
     @IBOutlet weak var backGroundView: UIView!
     
-    static let identifier = String(describing: DashboardCell.self)
+    static let identifier = String(describing: VehicleCell.self)
 
     override func awakeFromNib() {
         super.awakeFromNib()

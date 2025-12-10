@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import CoreLocation
 
 class UserDashboardVC: UIViewController {
     
@@ -16,9 +17,32 @@ class UserDashboardVC: UIViewController {
     
     
     
+    private var allBikeItems: [BikeItem] = []
+    
+    
+    let baseBikeCoordinates: [CLLocationCoordinate2D] = [
+        CLLocationCoordinate2D(latitude: 28.6901, longitude: 77.1492),
+        CLLocationCoordinate2D(latitude: 28.6884, longitude: 77.1478),
+        CLLocationCoordinate2D(latitude: 28.6915, longitude: 77.1503),
+        CLLocationCoordinate2D(latitude: 28.6872, longitude: 77.1461),
+        CLLocationCoordinate2D(latitude: 28.6920, longitude: 77.1489),
+        CLLocationCoordinate2D(latitude: 28.6897, longitude: 77.1512),
+        CLLocationCoordinate2D(latitude: 28.6931, longitude: 77.1473),
+        CLLocationCoordinate2D(latitude: 28.6869, longitude: 77.1498),
+        CLLocationCoordinate2D(latitude: 28.6908, longitude: 77.1520),
+        CLLocationCoordinate2D(latitude: 28.6881, longitude: 77.1456),
+        CLLocationCoordinate2D(latitude: 28.6912, longitude: 77.1531),
+        CLLocationCoordinate2D(latitude: 28.6876, longitude: 77.1509),
+        CLLocationCoordinate2D(latitude: 28.6940, longitude: 77.1481),
+        CLLocationCoordinate2D(latitude: 28.6899, longitude: 77.1449),
+        CLLocationCoordinate2D(latitude: 28.6925, longitude: 77.1517)
+    ]
+
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         initialSetUP()
+        prepareBikeClusterItems()
         
     }
     
@@ -28,10 +52,26 @@ class UserDashboardVC: UIViewController {
         
     }
     
+    func prepareBikeClusterItems(totalItems: Int = 2000) {
+        allBikeItems.removeAll(keepingCapacity: true)
+        let baseCount = baseBikeCoordinates.count
+        guard baseCount > 0 else { return }
+
+        for i in 0..<totalItems {
+            let base = baseBikeCoordinates[i % baseCount]
+            let jitterLat = Double.random(in: -0.00055...0.00055)
+            let jitterLng = Double.random(in: -0.00055...0.00055)
+            let pos = CLLocationCoordinate2D(latitude: base.latitude + jitterLat,
+                                             longitude: base.longitude + jitterLng)
+            let item = BikeItem(position: pos, bikeId: "bike-\(i)")
+            allBikeItems.append(item)
+        }
+    }
+    
     
     
   var dashBoardData: [VehicleDetailModel] = [
-    VehicleDetailModel(totalVehicle: 4000, vehicleStatus: "Total", backColor: UIColor(named: "app_blue") ?? .appBlue.withAlphaComponent(0.2)),
+    VehicleDetailModel(totalVehicle: 2000, vehicleStatus: "Total", backColor: UIColor(named: "app_blue") ?? .appBlue.withAlphaComponent(0.2)),
     VehicleDetailModel(totalVehicle: 500, vehicleStatus: "Running", backColor: UIColor(named: "app_green") ?? .appGreen.withAlphaComponent(0.2)),
     VehicleDetailModel(totalVehicle: 100, vehicleStatus: "Idle", backColor: UIColor(named: "app_yellow") ?? .appYellow.withAlphaComponent(0.2)),
     VehicleDetailModel(totalVehicle: 500, vehicleStatus: "Repair Need", backColor: UIColor(named: "app_pink") ?? .appPink.withAlphaComponent(0.2))
@@ -43,6 +83,8 @@ class UserDashboardVC: UIViewController {
     initailUISetUp()
     collectionView.registerXIB(name: DashboardCell.identifier)
     collectionView.registerXIB(name: ButtonCell.identifier)
+    collectionView.registerXIB(name: VehicleCell.identifier)
+
        
     }
     
@@ -61,10 +103,6 @@ class UserDashboardVC: UIViewController {
     
     //all Btn action
     
-    @IBAction func didTapMapBtn(_ sender: UIButton) {
-       // navigateToMap()
-    }
-    
     
     @IBAction func didTapBackBtn(_ sender: UIButton) {
         self.navigationController?.popViewController(animated: false)
@@ -75,7 +113,7 @@ class UserDashboardVC: UIViewController {
 //MARK: - collectionView Data Source & Delegate method
 extension UserDashboardVC: UICollectionViewDelegate, UICollectionViewDelegateFlowLayout, UICollectionViewDataSource {
     func numberOfSections(in collectionView: UICollectionView) -> Int {
-        return 2
+        return 3
     }
     
     
@@ -84,6 +122,8 @@ extension UserDashboardVC: UICollectionViewDelegate, UICollectionViewDelegateFlo
             return 4
         } else if section == 1 {
             return 1
+        } else if section == 2 {
+            return allBikeItems.count
         }
         return 0
      }
@@ -108,6 +148,9 @@ extension UserDashboardVC: UICollectionViewDelegate, UICollectionViewDelegateFlo
                 
             }
             return cell
+        } else if indexPath.section == 2 {
+            guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier:VehicleCell.identifier, for: indexPath) as? VehicleCell else {return UICollectionViewCell()}
+            return cell
         }
         return UICollectionViewCell()
     }
@@ -128,12 +171,22 @@ extension UserDashboardVC: UICollectionViewDelegate, UICollectionViewDelegateFlo
             let widthPerItem = collectionView.frame.width  - lay.minimumInteritemSpacing
             let heightPerItem = 150.0
             return CGSize(width:widthPerItem, height: heightPerItem)
+        } else if indexPath.section == 2 {
+            let lay = collectionViewLayout as! UICollectionViewFlowLayout
+            lay.minimumInteritemSpacing = 0.5
+            lay.minimumLineSpacing = 0.5
+            let widthPerItem = collectionView.frame.width  - lay.minimumInteritemSpacing
+            let heightPerItem = 100.0
+            return CGSize(width:widthPerItem, height: heightPerItem)
         }
         return CGSize(width: 100, height: 100)
     }
     
   func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-      
+          if indexPath.section == 2 {
+                 let bike = allBikeItems[indexPath.row]
+                 navigateToMap(with: bike)
+             }
     }
     
    
@@ -149,8 +202,9 @@ extension UserDashboardVC: UICollectionViewDelegate, UICollectionViewDelegateFlo
 
 //Mark: - Extension to move to another controller
 extension UserDashboardVC {
-    private func navigateToMap() {
+    private func navigateToMap(with bike: BikeItem? = nil) {
         let vc = MapViewVC()
+        vc.selectedBikeItem = bike
         self.navigationController?.pushViewController(vc, animated: true)
     }
 }

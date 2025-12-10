@@ -26,8 +26,6 @@ class ButtonCell: UICollectionViewCell {
             myView.layer.borderWidth = 0.5
             myView.layer.borderColor = UIColor.gray.cgColor
         }
-       
-        
     }
     
     

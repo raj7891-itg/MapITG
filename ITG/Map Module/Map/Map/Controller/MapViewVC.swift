@@ -19,10 +19,11 @@ class MapViewVC: UIViewController {
     var userMarker: GMSMarker?
     var routePolyline: GMSPolyline?
     var animatedMarker: GMSMarker?
+    var selectedBikeItem: BikeItem?
 
     // MARK: - Clustering
     var clusterManager: GMUClusterManager!
-    var allBikeItems: [BikeItem] = []
+    private var allBikeItems: [BikeItem] = []
     var visibleLoadDebounce: DispatchWorkItem?
     var vehicleDetails: DetailsModel?
    
@@ -70,7 +71,13 @@ class MapViewVC: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         mapView.animate(toZoom: 14)
+        if let bike = selectedBikeItem {
+            focusOnBike(bike)
+        }
+        
     }
+    
+
 
     // MARK: - Map Setup
     private func setupMap() {
@@ -147,6 +154,23 @@ class MapViewVC: UIViewController {
     @objc func didTapZoomOutBtn() {
         mapView.animate(toZoom: mapView.camera.zoom - 1)
     }
+    
+    func focusOnBike(_ bike: BikeItem) {
+        let coord = bike.position
+
+        let cameraUpdate = GMSCameraUpdate.setTarget(coord, zoom: 18)
+        mapView.animate(with: cameraUpdate)
+
+        // highlight the bike with marker
+        let marker = GMSMarker(position: coord)
+        marker.icon = UIImage(named: "bike") ?? GMSMarker.markerImage(with: .red)
+        marker.title = "Selected Vehicle"
+        marker.snippet = "Lat: \(coord.latitude), Lng: \(coord.longitude)"
+        marker.map = mapView
+        
+        mapView.selectedMarker = marker   // show info window
+    }
+
 }
 
 // MARK: - Clustering Setup & Visible Loading
@@ -162,7 +186,7 @@ extension MapViewVC {
         clusterManager.setDelegate(self, mapDelegate: self)
     }
 
-    func prepareBikeClusterItems(totalItems: Int = 5000) {
+    func prepareBikeClusterItems(totalItems: Int = 2000) {
         allBikeItems.removeAll(keepingCapacity: true)
         let baseCount = baseBikeCoordinates.count
         guard baseCount > 0 else { return }
@@ -304,6 +328,23 @@ extension MapViewVC: GMSMapViewDelegate, GMUClusterManagerDelegate, GMUClusterRe
             marker.groundAnchor = CGPoint(x: 0.5, y: 0.5)
         }
     }
+    
+    
+//    func renderer(_ renderer: GMUClusterRenderer, willRenderMarker marker: GMSMarker) {
+//        if marker.userData is GMUCluster {
+//            return
+//        }
+//          if marker.userData is BikeItem {
+//            let isCar = Bool.random()
+//            if isCar {
+//                marker.icon = UIImage(named: "car") ?? GMSMarker.markerImage(with: .green)
+//            } else {
+//                marker.icon = UIImage(named: "bike") ?? GMSMarker.markerImage(with: .red)
+//            }
+//
+//            marker.groundAnchor = CGPoint(x: 0.5, y: 0.5)
+//        }
+//    }
 }
 
 // MARK: - Directions, polyline draw, animate (but InfoWindow content handled by reverse geocode)
